@@ -1,0 +1,38 @@
+[
+    {
+      "name": "Josh Allen",
+      "team": "Buffalo Bills",
+      "position": "QB",
+      "stats": {
+        "passingYards": 4200,
+        "touchdowns": 35,
+        "interceptions": 11
+      },
+      "description": "A strong-armed quarterback with exceptional athleticism and running ability. Known for his deep throws and ability to extend plays.",
+      "image": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcS60OBuOGv17FHIuWHZR9ONPOTv5dcta1yZo7cOnZMEyEVDfkp8TguGwroFFwiW"
+    },
+    {
+      "name": "Patrick Mahomes",
+      "team": "Kansas City Chiefs",
+      "position": "QB",
+      "stats": {
+        "passingYards": 5000,
+        "touchdowns": 40,
+        "interceptions": 10
+      },
+      "description": "A highly skilled and creative quarterback with exceptional arm talent and improvisational skills. Can make throws from any angle and is a threat to run.",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCEq5lFj1tSP10TumtkRwV3QbcG9CigZAUic9vSU60OLFDYk-5FostS4ssKEC4"
+    },
+    {
+      "name": "Jalen Hurts",
+      "team": "Philadelphia Eagles",
+      "position": "QB",
+      "stats": {
+        "passingYards": 3800,
+        "touchdowns": 25,
+        "interceptions": 6
+      },
+      "description": "A dual-threat quarterback with a strong arm and excellent running ability. A leader on the field with a knack for making big plays.",
+      "image": "https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/4241479.png"
+    }
+]

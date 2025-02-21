@@ -1,74 +1,93 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { Player  } from '@/types';
+import players from '../../players.json';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+
+const PlayerProfile = ({player}: {player: Player}) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <ThemedView style={styles.playerContainer}>
+      <Image source={{ uri: player.image }} style={styles.image} />
+      <TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.nameContainer}>
+        <ThemedText type="default" style={styles.name}>{player.name}</ThemedText>
+        {expanded ? 
+          <IconSymbol
+            size={30}
+            color="#808080"
+            name="chevron.right"
+          />
+        :
+          <IconSymbol
+            size={30}
+            color="#808080"
+            name="chevron.right"
+          />
+        }
+      </TouchableOpacity>
+      {expanded && (
+        <ThemedView style={styles.detailsContainer}>
+          <ThemedText type="default">{player.position}</ThemedText>
+          <ThemedText type="default" align="center">{player.description}</ThemedText>
+        </ThemedView>
+      )}
+    </ThemedView>
+  );
+};
 
 export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={players ?? []}
+        keyExtractor={(player: Player) => player.name}
+        renderItem={({item: player}: {item: Player}) => {
+          return <PlayerProfile player={player} />;
+        }}
+        showsVerticalScrollIndicator={false}
+      />
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#fff'
+  },
+  playerContainer: {
+    alignItems: 'center',
+    padding: 20,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    backgroundColor: '#f9f9f9'
+  },
+  image: {
+    height: 120,
+    width: 120,
+    borderRadius: 60,
+    marginBottom: 10
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginRight: 5
+  },
+  nameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center'
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  detailsContainer: {
+    marginTop: 10
   },
 });
