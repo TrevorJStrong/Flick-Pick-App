@@ -7,6 +7,7 @@ import { Player  } from '@/types';
 import players from '../../players.json';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import StartBenchCutButtons from '@/components/StartBenchCutButtons';
 
 const PlayerProfile = ({player}: {player: Player}) => {
   const [expanded, setExpanded] = useState(false);
@@ -36,6 +37,7 @@ const PlayerProfile = ({player}: {player: Player}) => {
           <ThemedText type="default" align="center">{player.description}</ThemedText>
         </ThemedView>
       )}
+      <StartBenchCutButtons />
     </ThemedView>
   );
 };
@@ -50,6 +52,7 @@ export default function HomeScreen() {
           return <PlayerProfile player={player} />;
         }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
       />
     </SafeAreaView>
   );
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   playerContainer: {
-    alignItems: 'center',
+    // alignItems: 'center',
     padding: 20,
     marginVertical: 10,
     borderWidth: 1,
@@ -74,7 +77,8 @@ const styles = StyleSheet.create({
     height: 120,
     width: 120,
     borderRadius: 60,
-    marginBottom: 10
+    marginBottom: 10,
+    alignSelf: 'center'
   },
   name: {
     fontSize: 18,
