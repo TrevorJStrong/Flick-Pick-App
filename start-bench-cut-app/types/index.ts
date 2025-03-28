@@ -9,8 +9,9 @@ type Stats = {
 type Player = {
     name: string;
     position: string;
+    team: string;
     description: string;
-    image: string;
+    image_url: string;
     stats: Stats;
 };
 
