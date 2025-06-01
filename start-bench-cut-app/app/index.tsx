@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -10,9 +10,16 @@ import StartBenchCutButtons from '@/components/StartBenchCutButtons';
 import { Colors } from '@/constants/Colors';
 import { useNavigation } from 'expo-router';
 
-const PlayerProfile = ({player}: {player: Player}) => {
+const PlayerProfile = ({
+  player,
+  submittedPlayers,
+  setSubmittedPlayers
+}: {
+  player: Player,
+  submittedPlayers: any[],
+  setSubmittedPlayers: (players: any[]) => void
+}) => {
   const [expanded, setExpanded] = useState(false);
-
   return (
     <ThemedView style={styles.playerContainer}>
       <Image source={{ uri: player?.image_url }} style={styles.image} />
@@ -37,7 +44,11 @@ const PlayerProfile = ({player}: {player: Player}) => {
           <ThemedText type="default">{player?.position}</ThemedText>
         </ThemedView>
       )}
-      <StartBenchCutButtons />
+      <StartBenchCutButtons
+        player={player}
+        submittedPlayers={submittedPlayers}
+        setSubmittedPlayers={setSubmittedPlayers}
+      />    
     </ThemedView>
   );
 };
@@ -46,6 +57,13 @@ export default function HomeScreen() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [submittedPlayers, setSubmittedPlayers] = useState<Player[]>([]);
+  const [onSubmit, setOnSubmit] = useState<() => void>(() => () => {});
+
+  useEffect(() => {
+    // Update the submittedPlayers state based on the button pressed
+    console.log(submittedPlayers, 'submittedPlayers');
+  }, [submittedPlayers]);
 
   const navigation = useNavigation();
 
@@ -69,8 +87,16 @@ export default function HomeScreen() {
   };
 
   React.useEffect(() => {
-    fetchPlayers();
+    // fetchPlayers();
   }, []);
+
+  const isSubmitEnabled = submittedPlayers.length === 3 &&
+    new Set(submittedPlayers.map(p => p.action)).size === 3;
+
+  const handleSubmit = () => {
+    // Your submit logic here
+    console.log('Submitted:', submittedPlayers);
+  };
 
   if(isError) {
     return (
@@ -91,10 +117,31 @@ export default function HomeScreen() {
           data={players ?? []}
           keyExtractor={(player: Player) => player.name}
           renderItem={({item: player}: {item: Player}) => {
-            return <PlayerProfile player={player} />;
+            return (
+              <PlayerProfile
+                player={player}
+                submittedPlayers={submittedPlayers}
+                setSubmittedPlayers={setSubmittedPlayers}
+              />
+            );
           }}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 50 }}
+          ListFooterComponent={
+            <TouchableOpacity
+              style={{
+                backgroundColor: isSubmitEnabled ? '#28a745' : '#ccc',
+                padding: 15,
+                borderRadius: 8,
+                alignItems: 'center',
+                margin: 20,
+              }}
+              disabled={!isSubmitEnabled}
+              onPress={handleSubmit}
+            >
+              <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Submit</ThemedText>
+            </TouchableOpacity>
+          }
         />
       )}
     </SafeAreaView>

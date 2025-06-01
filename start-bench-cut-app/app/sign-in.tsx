@@ -2,7 +2,7 @@ import React from "react";
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-// import { useSession } from "@/context/auth";
+import { useSession } from "@/context/auth";
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/Colors";
