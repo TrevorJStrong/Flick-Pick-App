@@ -1,18 +1,8 @@
-// Type for player statistics
-type Stats = {
-    interceptions: number;
-    passingYards: number;
-    touchdowns: number;
+type Movie = {
+    title: string;
+    year: string;
+    genre: string;
+    poster: string;
 };
 
-// Type for a player
-type Player = {
-    name: string;
-    position: string;
-    team: string;
-    description: string;
-    image_url: string;
-    stats: Stats;
-};
-
-export { Player };
+export { Movie };

@@ -32,7 +32,8 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in" options={{ presentation: 'modal', headerShown: false, contentStyle: { backgroundColor: Colors.white }}}/>
+        <Stack.Screen name="sign-in" options={{ presentation: 'modal', headerShown: false, contentStyle: { backgroundColor: Colors.white }}} />
+        <Stack.Screen name="profile" options={{ headerShown: true, headerTitle: 'Profile' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
