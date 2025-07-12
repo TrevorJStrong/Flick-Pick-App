@@ -3,25 +3,25 @@ import { StyleSheet, FlatList, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '@/constants/Colors';
 
-// Dummy data for recent polls (replace with real API call)
 const dummyResults = [
   {
     id: '1',
     date: '2025-07-05',
     movies: [
-      { title: 'Inception', action: 'Start' },
-      { title: 'The Matrix', action: 'Bench' },
-      { title: 'Interstellar', action: 'Cut' },
+      { title: 'Inception', action: 'stream' },
+      { title: 'The Matrix', action: 'own' },
+      { title: 'Interstellar', action: 'skip' },
     ],
   },
   {
     id: '2',
     date: '2025-07-01',
     movies: [
-      { title: 'The Godfather', action: 'Start' },
-      { title: 'Pulp Fiction', action: 'Bench' },
-      { title: 'Goodfellas', action: 'Cut' },
+      { title: 'The Godfather', action: 'stream' },
+      { title: 'Pulp Fiction', action: 'own' },
+      { title: 'Goodfellas', action: 'skip' },
     ],
   },
 ];
@@ -29,7 +29,6 @@ const dummyResults = [
 export default function ProfileScreen() {
   const [results, setResults] = useState(dummyResults);
 
-  // Replace with real fetch logic
   useEffect(() => {
     // fetch('/api/user/results').then(...)
   }, []);
@@ -71,12 +70,12 @@ const styles = StyleSheet.create({
   },
   subheader: {
     fontSize: 18,
-    color: '#4a90e2',
+    color: Colors.blue,
     marginBottom: 18,
     fontWeight: '600',
   },
   resultCard: {
-    backgroundColor: '#f7fafd',
+    backgroundColor: Colors.light.background,
     borderRadius: 14,
     padding: 16,
     marginBottom: 18,
@@ -108,13 +107,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
-  start: {
-    color: '#28a745',
+  stream: {
+    color: Colors.green,
   },
-  bench: {
-    color: '#f0ad4e',
+  own: {
+    color: Colors.blue,
   },
-  cut: {
-    color: '#e74c3c',
+  skip: {
+    color: Colors.red,
   },
 });

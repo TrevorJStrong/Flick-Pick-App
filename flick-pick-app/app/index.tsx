@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, FlatList, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Animated, Dimensions } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -11,8 +11,10 @@ import { useNavigation } from 'expo-router';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const CARD_HEIGHT = SCREEN_HEIGHT / 3 - 32; // 3 cards, with some margin
+const CARD_HEIGHT = SCREEN_HEIGHT / 3 - 32;
 const CARD_WIDTH = SCREEN_WIDTH * 0.92; // 92% of screen width
+
+type MovieAction = 'own' | 'stream' | 'skip';
 
 const MovieItem = ({
   movie,
@@ -20,8 +22,8 @@ const MovieItem = ({
   setSubmittedMovies
 }: {
   movie: Movie,
-  submittedMovies: any[],
-  setSubmittedMovies: (movies: any[]) => void
+  submittedMovies: { title: string; action: MovieAction }[],
+  setSubmittedMovies: (movies: { title: string; action: MovieAction }[]) => void
 }) => {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
@@ -32,6 +34,20 @@ const MovieItem = ({
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
+  const assignedAction = submittedMovies.find((m) => m.title === movie.title)?.action;
+
+  const isActionAssigned = (action: MovieAction) =>
+    submittedMovies.some((m) => m.action === action && m.title !== movie.title);
+
+  const handleSelect = (action: MovieAction) => {
+    if (assignedAction === action) {
+      setSubmittedMovies(submittedMovies.filter((m) => m.title !== movie.title));
+    } else if (!isActionAssigned(action)) {
+      const filtered = submittedMovies.filter((m) => m.title !== movie.title);
+      setSubmittedMovies([...filtered, { title: movie.title, action }]);
+    }
+  };
 
   return (
     <ThemedView style={[styles.playerContainer, { height: CARD_HEIGHT, width: CARD_WIDTH }]}> 
@@ -47,17 +63,44 @@ const MovieItem = ({
             <ThemedText type="default" style={styles.genre}>{movie?.genre || ''}</ThemedText>
           </ThemedView>
           <ThemedView>
-            <TouchableOpacity style={[styles.actionButton, styles.ownButton]}>
-              <IconSymbol name="checkmark.circle" size={22} color="#28a745" />
-              <ThemedText style={styles.buttonText}>Own it</ThemedText>
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                styles.ownButton,
+                assignedAction === 'own' && styles.ownButtonActive,
+                isActionAssigned('own') && assignedAction !== 'own' && { opacity: 0.5 }
+              ]}
+              onPress={() => handleSelect('own')}
+              disabled={isActionAssigned('own') && assignedAction !== 'own'}
+            >
+              <IconSymbol name="checkmark.circle" size={22} color={assignedAction === 'own' ? '#fff' : isActionAssigned('own') ? '#ccc' : '#28a745'} />
+              <ThemedText style={[styles.buttonText, assignedAction === 'own' && { color: '#fff' }]}>Own it</ThemedText>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionButton, styles.streamButton]}>
-              <IconSymbol name="play.circle" size={22} color="#4a90e2" />
-              <ThemedText style={styles.buttonText}>Stream it</ThemedText>
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                styles.streamButton,
+                assignedAction === 'stream' && styles.streamButtonActive,
+                isActionAssigned('stream') && assignedAction !== 'stream' && { opacity: 0.5 }
+              ]}
+              onPress={() => handleSelect('stream')}
+              disabled={isActionAssigned('stream') && assignedAction !== 'stream'}
+            >
+              <IconSymbol name="play.circle" size={22} color={assignedAction === 'stream' ? '#fff' : isActionAssigned('stream') ? '#ccc' : '#4a90e2'} />
+              <ThemedText style={[styles.buttonText, assignedAction === 'stream' && { color: '#fff' }]}>Stream it</ThemedText>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.actionButton, styles.skipButton]}>
-              <IconSymbol name="delete.forward" size={22} color="#e74c3c" />
-              <ThemedText style={styles.buttonText}>Skip it</ThemedText>
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                styles.skipButton,
+                assignedAction === 'skip' && styles.skipButtonActive,
+                isActionAssigned('skip') && assignedAction !== 'skip' && { opacity: 0.5 }
+              ]}
+              onPress={() => handleSelect('skip')}
+              disabled={isActionAssigned('skip') && assignedAction !== 'skip'}
+            >
+              <IconSymbol name="delete.forward" size={22} color={assignedAction === 'skip' ? '#fff' : isActionAssigned('skip') ? '#ccc' : '#e74c3c'} />
+              <ThemedText style={[styles.buttonText, assignedAction === 'skip' && { color: '#fff' }]}>Skip it</ThemedText>
             </TouchableOpacity>
           </ThemedView>
         </ThemedView>
@@ -70,17 +113,15 @@ export default function HomeScreen() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [submittedMovies, setSubmittedMovies] = useState<Movie[]>([]);
+  const [submittedMovies, setSubmittedMovies] = useState<{ title: string; action: MovieAction }[]>([]);
   const [onSubmit, setOnSubmit] = useState<() => void>(() => () => {});
 
   useEffect(() => {
-    // Update the submittedMovies state based on the button pressed
     console.log(submittedMovies, 'submittedMovies');
   }, [submittedMovies]);
 
   const navigation = useNavigation();
 
-  // Header with profile icon
   const Header = () => (
     <ThemedView style={styles.header}>
       <ThemedText style={styles.headerTitle} type="title">Flick Pick</ThemedText>
@@ -117,7 +158,6 @@ export default function HomeScreen() {
     new Set(submittedMovies.map(p => p.action)).size === 3;
 
   const handleSubmit = () => {
-    // Your submit logic here
     console.log('Submitted:', submittedMovies);
   };
 
@@ -139,21 +179,23 @@ export default function HomeScreen() {
           <ThemedText>Loading Movies...</ThemedText>
         </ThemedView>
       ) : (
-        <FlatList
-          data={movies ?? []}
-          keyExtractor={(movie: Movie) => movie.title}
-          renderItem={({item: movie}: {item: Movie}) => {
-            return (
-              <MovieItem
-                movie={movie}
-                submittedMovies={submittedMovies}
-                setSubmittedMovies={setSubmittedMovies}
-              />
-            );
-          }}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 50 }}
-        />
+        <>
+          <FlatList
+            data={movies ?? []}
+            keyExtractor={(movie: Movie) => movie.title}
+            renderItem={({item: movie}: {item: Movie}) => {
+              return (
+                <MovieItem
+                  movie={movie}
+                  submittedMovies={submittedMovies}
+                  setSubmittedMovies={setSubmittedMovies}
+                />
+              );
+            }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 50 }}
+          />
+        </>
       )}
     </SafeAreaView>
   );
@@ -275,19 +317,32 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 2,
-    elevation: 1
+    elevation: 1,
+    width: 130
   },
   ownButton: {
-    borderColor: '#28a745',
+    borderColor: Colors.green,
     borderWidth: 1
+  },
+  ownButtonActive: {
+    backgroundColor: Colors.green,
+    borderColor: Colors.green,
   },
   streamButton: {
-    borderColor: '#4a90e2',
+    borderColor: Colors.blue,
     borderWidth: 1
   },
+  streamButtonActive: {
+    backgroundColor: Colors.blue,
+    borderColor: Colors.blue,
+  },
   skipButton: {
-    borderColor: '#e74c3c',
+    borderColor: Colors.red,
     borderWidth: 1
+  },
+  skipButtonActive: {
+    backgroundColor: Colors.red,
+    borderColor: Colors.red,
   },
   buttonText: {
     marginLeft: 6,
