@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Animated, Dimensions, Button } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -116,18 +116,42 @@ export default function HomeScreen() {
   const [submittedMovies, setSubmittedMovies] = useState<{ title: string; action: MovieAction }[]>([]);
   const [onSubmit, setOnSubmit] = useState<() => void>(() => () => {});
 
-  useEffect(() => {
-    console.log(submittedMovies, 'submittedMovies');
-  }, [submittedMovies]);
-
   const navigation = useNavigation();
+
+  const submitMovies = () => {
+    // Handle movie submission logic here via fetch
+    fetch('http://localhost:3000/api/submit/movies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        movies: submittedMovies.map(m => ({
+          title: m.title,
+          action: m.action,
+        })),
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Submission successful:', data);
+    })
+    .catch(error => {
+      console.error('Error submitting movies:', error);
+    });
+  };
 
   const Header = () => (
     <ThemedView style={styles.header}>
       <ThemedText style={styles.headerTitle} type="title">Flick Pick</ThemedText>
-      <TouchableOpacity style={styles.profileIconContainer} onPress={() => navigation.navigate('profile')}>
-        <IconSymbol name="person-circle" size={32} color="#4a90e2" />
-      </TouchableOpacity>
+      <ThemedView style={styles.headerIcons}>
+        <TouchableOpacity style={styles.quizIconContainer} onPress={() => navigation.navigate('quiz')}>
+          <IconSymbol name="questionmark.circle" size={30} color="#f0ad4e" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.profileIconContainer} onPress={() => navigation.navigate('sign-in')}>
+          <IconSymbol name="person.circle" size={32} color="#4a90e2" />
+        </TouchableOpacity>
+      </ThemedView>
     </ThemedView>
   );
 
@@ -161,16 +185,6 @@ export default function HomeScreen() {
     console.log('Submitted:', submittedMovies);
   };
 
-  if(isError) {
-    return (
-      <SafeAreaView style={styles.errorContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('sign-in')}>
-        <ThemedText>Oops something went wrong</ThemedText>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -180,21 +194,36 @@ export default function HomeScreen() {
         </ThemedView>
       ) : (
         <>
-          <FlatList
-            data={movies ?? []}
-            keyExtractor={(movie: Movie) => movie.title}
-            renderItem={({item: movie}: {item: Movie}) => {
-              return (
-                <MovieItem
-                  movie={movie}
-                  submittedMovies={submittedMovies}
-                  setSubmittedMovies={setSubmittedMovies}
-                />
-              );
-            }}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 50 }}
-          />
+          {isError ? (
+            <ThemedView style={styles.errorContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('sign-in')}>
+                <ThemedText>Oops something went wrong</ThemedText>
+              </TouchableOpacity>
+            </ThemedView>
+          ) : (
+            <ThemedView>
+              <FlatList
+                data={movies ?? []}
+                keyExtractor={(movie: Movie) => movie.title}
+                renderItem={({item: movie}: {item: Movie}) => {
+                  return (
+                    <MovieItem
+                      movie={movie}
+                      submittedMovies={submittedMovies}
+                      setSubmittedMovies={setSubmittedMovies}
+                    />
+                  );
+                }}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 50 }}
+              />
+              <Button
+                title="Submit your picks"
+                onPress={submitMovies}
+                disabled={!isSubmitEnabled}
+              />
+            </ThemedView>
+          )}
         </>
       )}
     </SafeAreaView>
@@ -215,6 +244,16 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 12,
     backgroundColor: 'transparent',
+  },
+  headerIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quizIconContainer: {
+    padding: 4,
+    borderRadius: 20,
+    backgroundColor: '#fffbe6',
+    marginRight: 8,
   },
   headerTitle: {
     fontSize: 28,
