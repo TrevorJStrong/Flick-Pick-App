@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Animated, Dimensions, Button } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';

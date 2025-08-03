@@ -2,20 +2,32 @@ import React from "react";
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { useSession } from "@/context/auth";
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/Colors";
 
 const loginUser = async (data: { email: string; password: string }) => {
   const { email, password } = data;
-  console.log(email, password);
-  // const response = await axios.post(`${apiUrl}/login`, { email, password });
-  // return response.data;
-  return {};
+  fetch('http://localhost:3000/api/signin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  }).then(response => {
+    if (response.ok) {
+      // Handle successful login
+      console.log('Login successful');
+    } else {
+      // Handle login error
+      console.error('Login failed');
+    }
+  }).catch(error => {
+    console.error('Error during login:', error);
+  });
 };
+
 const SignInScreen = () => {
-  // const { signIn } = useSession();
   const {
     handleSubmit,
     control,
@@ -30,6 +42,7 @@ const SignInScreen = () => {
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>Join the Game</ThemedText>
       <ThemedText type="defaultSemiBold" style={styles.subtitle}>Create an account or sign in to keep track of your selections and share them with others.</ThemedText>
+      {errors.email && <ThemedText color={Colors.red}>Email is required.</ThemedText>}
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
@@ -47,6 +60,7 @@ const SignInScreen = () => {
         name="email"
         rules={{ required: true }}
       />
+      {errors.password && <ThemedText color={Colors.red}>Password is required.</ThemedText>}
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (

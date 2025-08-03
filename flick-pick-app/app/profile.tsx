@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   resultCard: {
-    backgroundColor: Colors.light.background,
     borderRadius: 14,
     padding: 16,
     marginBottom: 18,
