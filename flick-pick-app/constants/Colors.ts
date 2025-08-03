@@ -1,27 +1,7 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-const tintColorLight = '#0a7ea4';
+import { Dimensions } from "react-native";
 
 export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#FFFFFF',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: '#FFFFFF',
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: '#FFFFFF',
-  },
+  black: '#000000',
   white: '#FFFFFF',
   green: '#28a745',
   blue: '#4a90e2',
@@ -51,3 +31,8 @@ export const borderRadius = {
   lg: 12,
   xl: 16,
 };
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+export const CARD_HEIGHT = SCREEN_HEIGHT / 3 - 32;
+export const CARD_WIDTH = SCREEN_WIDTH * 0.92; // 92% of screen width

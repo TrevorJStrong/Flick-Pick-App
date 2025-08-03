@@ -5,4 +5,6 @@ type Movie = {
     poster: string;
 };
 
-export { Movie };
+type MovieAction = 'own' | 'stream' | 'skip';
+
+export type { Movie, MovieAction };

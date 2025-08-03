@@ -17,7 +17,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.flickpickapp"
+      "package": "com.flickpick.app"
     },
     "web": {
       "bundler": "metro",
