@@ -24,8 +24,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="myapp"/>
-        <data android:scheme="com.flickpick.app"/>
+        <data android:scheme="flickpick"/>
       </intent-filter>
     </activity>
   </application>

@@ -28,11 +28,21 @@ export default function RootLayout() {
   useEffect(() => {
     OneSignal.Debug.setLogLevel(LogLevel.Verbose);
     // Initialize with your OneSignal App ID
-    OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID || '', );
+    OneSignal.initialize(process.env.EXPO_PUBLIC_ONE_SIGNAL_APP_ID || '');
     // Use this method to prompt for push notifications.
     // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
     OneSignal.Notifications.requestPermission(false);
   }, []);
+
+  useEffect(() => {
+    OneSignal.Notifications.addEventListener('click', (event) => {
+      console.log('OneSignal: notification clicked:', event.notification);
+    });
+    return () => {
+      OneSignal.Notifications.removeEventListener('click', () => {});
+    }
+  }, []);
+
 
   if (!loaded) {
     return null;
