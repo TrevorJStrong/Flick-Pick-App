@@ -1,4 +1,3 @@
-import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -6,18 +5,26 @@ import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
 import { useNavigation } from 'expo-router';
+import useUserStore from '@/hooks/useStore';
 
 const Header = () => {
   const navigation = useNavigation();
+  const { user } = useUserStore.getState();
+
+  const handleProfilePress = () => {
+    if (user) {
+      navigation.navigate('profile');
+      return;
+    }
+    
+    navigation.navigate('sign-in');
+  }
   return (
     <ThemedView style={styles.header}>
       <ThemedText style={styles.headerTitle} type="title">Flick Pick</ThemedText>
       <ThemedView style={styles.headerIcons}>
-        <TouchableOpacity style={styles.quizIconContainer} onPress={() => navigation.navigate('quiz')}>
-          <IconSymbol name="questionmark.circle" size={30} color="#f0ad4e" />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.profileIconContainer} onPress={() => navigation.navigate('sign-in')}>
-        <IconSymbol name="person.circle" size={32} color="#4a90e2" />
+      <TouchableOpacity style={styles.profileIconContainer} onPress={handleProfilePress}>
+        <IconSymbol name="person.circle" size={32} color={Colors.blue} />
       </TouchableOpacity>
     </ThemedView>
   </ThemedView>

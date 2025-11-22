@@ -11,8 +11,18 @@ const MAPPING = {
   // See SF Symbols in the SF Symbols app on Mac.
   'house.fill': 'home',
   'paperplane.fill': 'send',
+  'person.circle': 'person',
+  'person.2.badge.gearshape': 'manage-accounts',
+  'questionmark.circle': 'help-outline',
+  'star.fill': 'star',
+  'heart.fill': 'favorite',
+  'gearshape.fill': 'settings',
+  'bell.fill': 'notifications',
+  'link': 'link',
+  'lock.fill': 'lock',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'chevron.left': 'chevron-left',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

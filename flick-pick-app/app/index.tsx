@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Button, Alert } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -44,7 +44,7 @@ export default function HomeScreen() {
 
   const fetchMovies = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/generate/movies', {
+      const response = await fetch('http://10.0.2.2:3000/api/generate/movies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +58,7 @@ export default function HomeScreen() {
     } catch (error) {
       setIsLoading(false);
       setIsError(true);
+      Alert.alert('Error', 'Failed to fetch movies. Please try again.');
     }
   };
 
