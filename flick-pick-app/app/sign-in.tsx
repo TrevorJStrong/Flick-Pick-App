@@ -57,8 +57,8 @@ const loginUser = async (data: { email: string; password: string }) => {
 
 const signInWithGoogle = async () => {
   try {
-    const googleResp = await GoogleLogin();
-    const idToken = googleResp?.data?.idToken;
+    const googleResponse = await GoogleLogin();
+    const idToken = googleResponse?.data?.idToken;
     verifyGoogleToken(idToken ?? undefined);
   } catch (err) {
     Alert.alert('Google Sign-In Failed', 'An error occurred during Google sign-in.');
@@ -67,7 +67,6 @@ const signInWithGoogle = async () => {
 
 const verifyGoogleToken = async (idToken: string | undefined) => {
   if (!idToken) {
-    console.error('No ID token provided for verification');
     Alert.alert('Google Sign-In Failed', 'No ID token provided.');
     return;
   }
@@ -81,7 +80,6 @@ const verifyGoogleToken = async (idToken: string | undefined) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Google token verification failed:', errorText);
       Alert.alert('Google Sign-In Failed', errorText || 'Unable to verify Google token.');
       return;
     }

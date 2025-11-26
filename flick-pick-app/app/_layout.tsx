@@ -6,10 +6,15 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { OneSignal, LogLevel } from 'react-native-onesignal';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { QueryClientProvider } from '@tanstack/react-query'
 
+import { queryClient } from "../queryClient"
+
+if (__DEV__) {
+  require("../reactotron");
+}
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -43,20 +48,21 @@ export default function RootLayout() {
     }
   }, []);
 
-
   if (!loaded) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in" options={{ presentation: 'modal', headerShown: false, contentStyle: { backgroundColor: Colors.white }}} />
-        <Stack.Screen name="profile" options={{ headerShown: true, headerTitle: 'Profile' }} />
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="sign-in" options={{ presentation: 'modal', headerShown: false, contentStyle: { backgroundColor: Colors.white }}} />
+          <Stack.Screen name="profile" options={{ headerShown: true, headerTitle: 'Profile' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
+  </QueryClientProvider>
   );
 }
