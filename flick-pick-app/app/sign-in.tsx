@@ -92,15 +92,13 @@ const verifyGoogleToken = async (idToken: string | undefined) => {
   }
 };
 
-const handlePostSignIn = async (data: { token: string; user: { userId: string; email: string; name: string } }) => {
-  const user = {
-    id: data.user.userId,
+const handlePostSignIn = async (data: { token: string; user: { _id: string; email: string; name: string } }) => {  
+  setToken(data.token);
+  setUser({
+    id: data.user._id,
     email: data.user.email,
     name: data.user.name,
-  };
-  
-  setToken(data.token);
-  setUser(user);
+  });
   router.push('/');
 }
 

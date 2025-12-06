@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, FlatList, TouchableOpacity, Button, Alert } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -9,69 +9,52 @@ import { Colors } from '@/constants/Colors';
 import { useNavigation } from 'expo-router';
 import MovieItem from '@/components/ui/MovieItem';
 import Header from '@/components/ui/Header';
+import { useMovies, useSubmitMovies } from '@/hooks/useMovies';
+import useUserStore from '@/hooks/useStore';
 
 export default function HomeScreen() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
   const [submittedMovies, setSubmittedMovies] = useState<{ title: string; action: MovieAction }[]>([]);
-  const [onSubmit, setOnSubmit] = useState<() => void>(() => () => {});
-
   const navigation = useNavigation();
 
-  const submitMovies = () => {
-    // Handle movie submission logic here via fetch
-    fetch('http://localhost:3000/api/submit/movies', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        movies: submittedMovies.map(m => ({
-          title: m.title,
-          action: m.action,
-        })),
-      }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Submission successful:', data);
-    })
-    .catch(error => {
-      console.error('Error submitting movies:', error);
-    });
-  };
+  const { data: movies, isLoading, isError } = useMovies();
+  // const { mutate: submitMoviesMutation } = useSubmitMovies();
 
-  const fetchMovies = async () => {
+  const user = useUserStore(state => state.user);
+
+  useEffect(() => {
+    console.log('show submittedMovies:', submittedMovies);
+  }, [submittedMovies]);
+
+  const submitMovies = async () => {
+    if (!user?.id) {
+      Alert.alert('Error', 'User not found. Please sign in.');
+      return;
+    }
+
     try {
-      const response = await fetch('http://10.0.2.2:3000/api/generate/movies', {
+      const response = await fetch(process.env.EXPO_PUBLIC_API_URL + '/api/submit/movies', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.EXPO_PUBLIC_OPEN_AI_KEY}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          movies: submittedMovies,
+        }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Submission failed');
+      }
+
       const data = await response.json();
-      console.log(data);
-      setMovies(data);
-      setIsLoading(false);
+      Alert.alert('Success', 'Movies submitted successfully!');
     } catch (error) {
-      setIsLoading(false);
-      setIsError(true);
-      Alert.alert('Error', 'Failed to fetch movies. Please try again.');
+      Alert.alert('Error', error instanceof Error ? error.message : 'Unknown error');
     }
   };
 
-  React.useEffect(() => {
-    fetchMovies();
-  }, []);
-
   const isSubmitEnabled = submittedMovies.length === 3 &&
     new Set(submittedMovies.map(p => p.action)).size === 3;
-
-  const handleSubmit = () => {
-    console.log('Submitted:', submittedMovies);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,6 +76,13 @@ export default function HomeScreen() {
               <FlatList
                 data={movies ?? []}
                 keyExtractor={(movie: Movie) => movie.title}
+                ListHeaderComponent={
+                  <Button
+                    title="Submit your picks"
+                    onPress={submitMovies}
+                    disabled={!isSubmitEnabled}
+                  />
+                }
                 renderItem={({item: movie}: {item: Movie}) => {
                   return (
                     <MovieItem
@@ -104,11 +94,6 @@ export default function HomeScreen() {
                 }}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 50 }}
-              />
-              <Button
-                title="Submit your picks"
-                onPress={submitMovies}
-                disabled={!isSubmitEnabled}
               />
             </ThemedView>
           )}
